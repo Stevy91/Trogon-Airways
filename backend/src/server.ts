@@ -19,11 +19,13 @@ const router = express.Router();
 // Configuration de l'environnement
 dotenv.config();
 
-// Initialisation de l'application Express
+
+
 const app = express();
+const PORT = process.env.PORT || 3000;
 
 // Middleware
-// app.use(cors());
+app.use(cors());
 app.use(express.json());
 
 app.use(helmet());
@@ -1076,11 +1078,13 @@ router.post("/send-ticket", async (req, res) => {
 app.use("/api", router);
 
 // Démarrer le serveur
-const PORT = process.env.PORT || 3014;
+
 
 app.listen(PORT, () => {
     console.log(`Serveur en écoute sur le port ${PORT}`);
 });
+
+
 
 
 
