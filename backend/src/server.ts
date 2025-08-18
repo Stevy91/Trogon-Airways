@@ -47,6 +47,12 @@ const dbConfig = {
     database: process.env.DB_NAME || "flight_booking",
 };
 
+
+
+// Initialisation de Stripe avec votre clé secrète
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
+  apiVersion: "2025-05-28.basil",
+});
 // Remplacer la configuration actuelle par :
 // const dbConfig = {
 //     host: process.env.DB_HOST,
