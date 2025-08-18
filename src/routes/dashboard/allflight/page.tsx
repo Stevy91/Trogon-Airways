@@ -48,7 +48,7 @@ const FlightTable = () => {
         const fetchFlights = async () => {
             try {
                 console.log("Début de la récupération des vols...");
-                const response = await fetch("http://localhost:3014/flighttableplane");
+                const response = await fetch("${import.meta.env.VITE_API_URL}/flighttableplane");
 
                 if (!response.ok) {
                     const errorData = await response.json().catch(() => ({}));
@@ -84,7 +84,7 @@ const FlightTable = () => {
 
     const handleAddFlight = async (flightData: any) => {
         try {
-            const response = await fetch("http://localhost:3014/addflighttable", {
+            const response = await fetch("${import.meta.env.VITE_API_URL}/addflighttable", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -106,7 +106,7 @@ const FlightTable = () => {
             }
 
             // Rechargement des données
-            const updatedResponse = await fetch("http://localhost:3014/flighttableplane"); // Changé le endpoint
+            const updatedResponse = await fetch("${import.meta.env.VITE_API_URL}/flighttableplane"); // Changé le endpoint
             if (!updatedResponse.ok) {
                 throw new Error("Erreur lors du chargement des vols");
             }
@@ -126,7 +126,7 @@ const FlightTable = () => {
     };
     const deleteFlight = async (flightId: number) => {
         try {
-            const response = await fetch(`http://localhost:3014/deleteflights/${flightId}`, {
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/deleteflights/${flightId}`, {
                 method: "DELETE",
                 headers: { "Content-Type": "application/json" },
             });

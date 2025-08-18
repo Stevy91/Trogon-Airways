@@ -155,9 +155,9 @@ const mapFlight = (flight: any, locations: Location[]): Flight => {
 const fetchFlightData = async (params: URLSearchParams, signal?: AbortSignal) => {
     try {
         const [locationsRes, flightAllRes, filteredFlightsRes] = await Promise.all([
-            fetch(`http://localhost:3014/locations`, { signal }),
-            fetch(`http://localhost:3014/flightall`, { signal }),
-            fetch(`http://localhost:3014/flights?${params.toString()}`, { signal }),
+            fetch(`${import.meta.env.VITE_API_URL}/locations`, { signal }),
+            fetch(`${import.meta.env.VITE_API_URL}/flightall`, { signal }),
+            fetch(`${import.meta.env.VITE_API_URL}/flights?${params.toString()}`, { signal }),
         ]);
 
         if (!locationsRes.ok || !flightAllRes.ok || !filteredFlightsRes.ok) {
@@ -180,7 +180,7 @@ const fetchFlightData = async (params: URLSearchParams, signal?: AbortSignal) =>
             returnParams.set("to", params.get("from") || "");
             returnParams.set("date", params.get("return_date") || "");
 
-            const returnFlightsRes = await fetch(`http://localhost:3014/flights?${returnParams.toString()}`, { signal });
+            const returnFlightsRes = await fetch(`${import.meta.env.VITE_API_URL}/flights?${returnParams.toString()}`, { signal });
             if (returnFlightsRes.ok) {
                 const returnData = await returnFlightsRes.json();
                 returnFlights = Array.isArray(returnData) ? returnData : returnData.outbound || [];

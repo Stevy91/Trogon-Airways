@@ -54,7 +54,7 @@ const DashboardPage = () => {
             try {
                 setLoading(true);
 
-                const response = await fetch("http://localhost:3014/dashboard-stats");
+                const response = await fetch("${import.meta.env.VITE_API_URL}/dashboard-stats");
 
                 if (!response.ok) {
                     throw new Error(`Erreur HTTP: ${response.status}`);

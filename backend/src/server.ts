@@ -23,29 +23,29 @@ dotenv.config();
 const app = express();
 
 // Middleware
-app.use(cors());
+// app.use(cors());
 app.use(express.json());
 
-// app.use(helmet());
-// app.use(rateLimit({
-//     windowMs: 15 * 60 * 1000, // 15 minutes
-//     max: 100 // limite chaque IP à 100 requêtes par fenêtre
-// }));
+app.use(helmet());
+app.use(rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 100 // limite chaque IP à 100 requêtes par fenêtre
+}));
 
-// Configurer CORS plus restrictivement
-// app.use(cors({
-//     origin: ['https://votre-domaine.com'],
-//     methods: ['GET', 'POST', 'PUT', 'DELETE'],
-//     allowedHeaders: ['Content-Type', 'Authorization']
-// }));
+
+app.use(cors({
+    origin: ['http://trogon-airways.onrender.com/'],
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization']
+}));
 
 // Configuration de la base de données
-const dbConfig = {
-    host: process.env.DB_HOST || "localhost",
-    user: process.env.DB_USER || "root",
-    password: process.env.DB_PASSWORD || "",
-    database: process.env.DB_NAME || "flight_booking",
-};
+// const dbConfig = {
+//     host: process.env.DB_HOST || "localhost",
+//     user: process.env.DB_USER || "root",
+//     password: process.env.DB_PASSWORD || "",
+//     database: process.env.DB_NAME || "flight_booking",
+// };
 
 
 
@@ -54,19 +54,19 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
   apiVersion: "2025-05-28.basil",
 });
 // Remplacer la configuration actuelle par :
-// const dbConfig = {
-//     host: process.env.DB_HOST,
-//     user: process.env.DB_USER,
-//     password: process.env.DB_PASSWORD,
-//     database: process.env.DB_NAME,
-//     waitForConnections: true,
-//     connectionLimit: 10,
-//     queueLimit: 0,
-//     ssl: process.env.DB_SSL === 'true' ? {
-//         rejectUnauthorized: true,
-//         ca: process.env.DB_SSL_CA
-//     } : undefined
-// };
+const dbConfig = {
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_NAME,
+    waitForConnections: true,
+    connectionLimit: 10,
+    queueLimit: 0,
+    ssl: process.env.DB_SSL === 'true' ? {
+        rejectUnauthorized: true,
+        ca: process.env.DB_SSL_CA
+    } : undefined
+};
 
 
 
@@ -1009,28 +1009,28 @@ app.delete("/deleteflights/:id", async (req, res) => {
     }
 });
 
-const transporter = nodemailer.createTransport({
-    host: "localhost",
-    port: 1025,
-    secure: false,
-    // Options supplémentaires pour plus de stabilité
-    connectionTimeout: 5000,
-    socketTimeout: 5000,
-    logger: true, // Active les logs détaillés
-});
-
 // const transporter = nodemailer.createTransport({
-//     host: process.env.SMTP_HOST,
-//     port: parseInt(process.env.SMTP_PORT || '587'),
-//     secure: process.env.SMTP_SECURE === 'true',
-//     auth: {
-//         user: process.env.SMTP_USER,
-//         pass: process.env.SMTP_PASS
-//     },
-//     tls: {
-//         rejectUnauthorized: process.env.NODE_ENV === 'production'
-//     }
+//     host: "localhost",
+//     port: 1025,
+//     secure: false,
+//     // Options supplémentaires pour plus de stabilité
+//     connectionTimeout: 5000,
+//     socketTimeout: 5000,
+//     logger: true, // Active les logs détaillés
 // });
+
+const transporter = nodemailer.createTransport({
+    host: process.env.SMTP_HOST,
+    port: parseInt(process.env.SMTP_PORT || '587'),
+    secure: process.env.SMTP_SECURE === 'true',
+    auth: {
+        user: process.env.SMTP_USER,
+        pass: process.env.SMTP_PASS
+    },
+    tls: {
+        rejectUnauthorized: process.env.NODE_ENV === 'production'
+    }
+});
 
 
 // Définissez la route
@@ -1077,23 +1077,24 @@ app.use("/api", router);
 
 // Démarrer le serveur
 const PORT = process.env.PORT || 3014;
+
 app.listen(PORT, () => {
     console.log(`Serveur en écoute sur le port ${PORT}`);
 });
 
 
-// En production seulement
-// if (process.env.NODE_ENV === 'production') {
-//     const options = {
-//         key: fs.readFileSync('/path/to/privkey.pem'),
-//         cert: fs.readFileSync('/path/to/fullchain.pem')
-//     };
 
-//     https.createServer(options, app).listen(443, () => {
-//         console.log('Serveur HTTPS démarré sur le port 443');
-//     });
-// } else {
-//     app.listen(PORT, () => {
-//         console.log(`Serveur en écoute sur le port ${PORT}`);
-//     });
-// }
+if (process.env.NODE_ENV === 'production') {
+    const options = {
+        key: fs.readFileSync('/path/to/privkey.pem'),
+        cert: fs.readFileSync('/path/to/fullchain.pem')
+    };
+
+    https.createServer(options, app).listen(443, () => {
+        console.log('Serveur HTTPS démarré sur le port 443');
+    });
+} else {
+    app.listen(PORT, () => {
+        console.log(`Serveur en écoute sur le port ${PORT}`);
+    });
+}
