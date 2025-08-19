@@ -15,7 +15,7 @@
     "types": ["@stripe/stripe-js"]
   },
   "include": ["src/**/*.{ts,tsx}"],
-"exclude": ["node_modules", "**/*.d.ts"]
+"exclude": ["node_modules", "**/*.d.ts"],
   "references": [
     { "path": "./tsconfig.app.json" },
     { "path": "./tsconfig.node.json" }
