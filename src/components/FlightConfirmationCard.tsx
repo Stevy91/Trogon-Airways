@@ -2,6 +2,20 @@ import { Plane } from "lucide-react";
 import { Icon } from "@iconify/react";
 import { format, parseISO } from "date-fns";
 import { useSearchParams } from "react-router-dom";
+export interface UIFlight {
+  id: string | number;
+  date: string;
+  from: string;
+  to: string;
+  price: number;
+  airline?: string;
+  seatsAvailable?: number;
+  seat:string | number;
+  departure_time: string;
+  type: string;
+  arrival_time:string;
+  // ajoute ici toutes les autres propriétés dont tu as besoin
+}
 
 type FlightCardProps = {
     card: UIFlight;

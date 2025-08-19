@@ -1,6 +1,22 @@
 import { Plane, Sofa } from "lucide-react";
 import { Icon } from "@iconify/react";
 import { format, parseISO } from "date-fns";
+// src/types/flight.ts
+export interface UIFlight {
+  id: string | number;
+  date: string;
+  from: string;
+  to: string;
+  price: number;
+  airline?: string;
+  seatsAvailable?: number;
+  seat:string | number;
+  departure_time: string;
+  type: string;
+  arrival_time:string;
+  // ajoute ici toutes les autres propriétés dont tu as besoin
+}
+
 
 type FlightCardProps = {
     flight: UIFlight;
