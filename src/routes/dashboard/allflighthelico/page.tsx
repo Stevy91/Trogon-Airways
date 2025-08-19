@@ -1,5 +1,5 @@
 import { ChevronDown, MapPinIcon, Pencil, TicketsPlane, Trash2 } from "lucide-react";
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 
 interface Flight {
     id: number;

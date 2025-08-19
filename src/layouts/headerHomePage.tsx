@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import { useLocation, Link } from "react-router-dom";
-import { FacebookIcon, InstagramIcon, UserIcon, GlobeIcon, Phone, ChevronDown, Bell, MenuIcon, XIcon } from "lucide-react";
+import { FacebookIcon, InstagramIcon, GlobeIcon, Phone, ChevronDown, MenuIcon, XIcon } from "lucide-react";
 import { headerHomeLinks, headerMobilLinks } from "../constants";
 
 const HeaderHomePage = () => {

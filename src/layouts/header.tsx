@@ -1,4 +1,4 @@
-import { Bell, ChevronsLeft, Moon, Search, Sun } from "lucide-react";
+import { Bell, ChevronsLeft, Moon, Sun } from "lucide-react";
 import { useTheme } from "../contexts/theme-context";
 import profileImg from "../assets/profile-image.jpg";
 import React, { useState, useRef, useEffect } from "react";

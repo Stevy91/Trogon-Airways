@@ -30,6 +30,7 @@ export default function BookingForm({ onSearch }: BookingFormProps) {
     const [selectedDeparture, setSelectedDeparture] = useState("");
     const [selectedDestination, setSelectedDestination] = useState("");
     const [selectedDate, setSelectedDate] = useState("");
+  
 
 
     const [selectedDeparture2, setSelectedDeparture2] = useState("");
@@ -48,9 +49,7 @@ export default function BookingForm({ onSearch }: BookingFormProps) {
         returnDate: "",
     });
 
-    useEffect(() => {
-        setSelectedType(selectedTabTrip);
-    }, [selectedTabTrip]);
+  
 
     const getFilteredDestinations = () => {
         const departureCode = selectedTabTrip === "onway" ? selectedDeparture : selectedDeparture2;

@@ -1,7 +1,8 @@
 import { Plane } from "lucide-react";
 import { Icon } from "@iconify/react";
 import { format, parseISO } from "date-fns";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
+
 type FlightCardProps = {
     card: UIFlight;
 };

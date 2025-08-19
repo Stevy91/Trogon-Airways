@@ -1,5 +1,5 @@
 import { useEffect, useState, useMemo, useCallback } from "react";
-import { ChevronLeft, ChevronRight, CalendarDays, PlaneIcon, PlaneTakeoff, PlaneLanding, Clock4, Users, Plane } from "lucide-react";
+import { ChevronLeft, ChevronRight, CalendarDays, PlaneIcon, PlaneTakeoff, PlaneLanding } from "lucide-react";
 import { Icon } from "@iconify/react";
 import { addDays, isSameDay, parseISO, format } from "date-fns";
 import DateCarousel from "../../components/DateCarousel";
@@ -9,7 +9,7 @@ import { useSearchParams, useNavigate } from "react-router-dom";
 import Spinner from "../../components/Spinner";
 import ErrorAlert from "../../components/ErrorAlert";
 import EmptyState from "../../components/EmptyState";
-import { HelicopterIcon } from "../../components/icons/HelicopterIcon";
+
 
 type FlightType = "plane" | "helicopter";
 
@@ -196,7 +196,7 @@ const fetchFlightData = async (params: URLSearchParams, signal?: AbortSignal) =>
 export default function FlightSelection() {
     const navigate = useNavigate();
     const [searchParams] = useSearchParams();
-    const [currentStep, setCurrentStep] = useState(0);
+    const [currentStep] = useState(0);
     const [selectedDateIndex, setSelectedDateIndex] = useState(0);
     const [selectedReturnDateIndex, setSelectedReturnDateIndex] = useState(0);
     const [startIndex, setStartIndex] = useState(0);

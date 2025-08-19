@@ -7,7 +7,7 @@ type FlightCardProps = {
     isOpen: boolean;
     onToggle: () => void;
 };
-export default function FlightCard({ flight, isOpen, onToggle }: FlightCardProps) {
+export default function FlightCard({ flight, onToggle }: FlightCardProps) {
     const hasSeats = flight.seat !== "0"; // Vérifie si des places sont disponibles
 
     return (

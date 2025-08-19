@@ -1,4 +1,4 @@
-import { TowerControl , Plane, Lock, Armchair, Plus, Settings, Users, LayoutDashboard, UserRound, House, Info, Contact } from "lucide-react";
+import { TowerControl , Plane, Lock, Armchair, Settings, Users, LayoutDashboard, UserRound, House, Info, Contact } from "lucide-react";
 import { HelicopterIcon } from "../components/icons/HelicopterIcon";
 
 export const navbarLinks = [
