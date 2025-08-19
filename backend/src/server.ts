@@ -18,27 +18,24 @@ const router = express.Router();
 
 // Configuration de l'environnement
 dotenv.config();
-
-
-
 const app = express();
-const PORT = process.env.PORT || 3000;
-
-// Middleware
-app.use(cors());
-app.use(express.json());
+const PORT = process.env.PORT || 10000;
 
 app.use(helmet());
 app.use(rateLimit({
-    windowMs: 15 * 60 * 1000, // 15 minutes
-    max: 100 // limite chaque IP à 100 requêtes par fenêtre
+    windowMs: 15 * 60 * 1000,
+    max: 100
 }));
 
-
+// CORS configuré pour Render
 app.use(cors({
-    origin: ['http://trogon-airways.onrender.com/'],
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],
-    allowedHeaders: ['Content-Type', 'Authorization']
+    origin: [
+        'https://trogon-airways.onrender.com',
+        'http://localhost:3000'
+    ],
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
 }));
 
 // Configuration de la base de données
@@ -49,13 +46,14 @@ app.use(cors({
 //     database: process.env.DB_NAME || "flight_booking",
 // };
 
+// Pool MySQL global
+const pool = mysql.createPool(dbConfig);
 
 
-// Initialisation de Stripe avec votre clé secrète
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
-  apiVersion: "2025-05-28.basil",
-});
-// Remplacer la configuration actuelle par :
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true }));
+
+// Configuration de la base de données
 const dbConfig = {
     host: process.env.DB_HOST,
     user: process.env.DB_USER,
@@ -64,14 +62,29 @@ const dbConfig = {
     waitForConnections: true,
     connectionLimit: 10,
     queueLimit: 0,
-    ssl: process.env.DB_SSL === 'true' ? {
-        rejectUnauthorized: true,
-        ca: process.env.DB_SSL_CA
-    } : undefined
+    acquireTimeout: 60000,
+    timeout: 60000,
+    ...(process.env.DB_SSL === 'true' ? {
+        ssl: {
+            rejectUnauthorized: false
+        }
+    } : {})
 };
 
+// Test de connexion à la base de données
+pool.getConnection()
+    .then(connection => {
+        console.log('✅ Connecté à la base de données MySQL');
+        connection.release();
+    })
+    .catch(err => {
+        console.error('❌ Erreur de connexion MySQL:', err.message);
+    });
 
-
+// Initialisation de Stripe avec votre clé secrète
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
+  apiVersion: "2025-05-28.basil",
+});
 // Interfaces
 interface Flight extends mysql.RowDataPacket {
     id: number | string;
@@ -208,7 +221,7 @@ function getCountryName(code: string): string | null {
 // Routes pour les vols
 app.get("/flightall", async (req: Request, res: Response) => {
     try {
-        const connection = await mysql.createConnection(dbConfig);
+        const connection = await pool.getConnection();
         const [rows] = await connection.execute<Flight[]>("SELECT * FROM flights");
         await connection.end();
         res.json(rows);
@@ -250,7 +263,7 @@ app.get("/flights", async (req: Request, res: Response) => {
             });
         }
 
-        const connection = await mysql.createConnection(dbConfig);
+        const connection = await pool.getConnection();
 
         // Vérification des aéroports
         const [departureAirport] = await connection.execute<Location[]>("SELECT id FROM locations WHERE code = ?", [from]);
@@ -318,7 +331,7 @@ app.get("/flights", async (req: Request, res: Response) => {
 // Routes pour les localisations
 app.get("/locations", async (req: Request, res: Response) => {
     try {
-        const connection = await mysql.createConnection(dbConfig);
+        const connection = await pool.getConnection();
         const [allRows] = await connection.execute<Location[]>("SELECT * FROM locations");
         await connection.end();
         res.json(allRows);
@@ -347,7 +360,7 @@ function generateBookingRef(): string {
     return `BOOK-${Math.floor(100000 + Math.random() * 900000)}`;
 }
 app.post("/create-payment-intent", async (req: Request, res: Response) => {
-    const connection = await mysql.createConnection(dbConfig);
+    const connection = await pool.getConnection();
 
     try {
         // 1. Validation renforcée
@@ -632,7 +645,7 @@ interface FlightWithAirports extends mysql.RowDataPacket {
 
 app.get("/locationstable", async (req: Request, res: Response) => {
     try {
-        const connection = await mysql.createConnection(dbConfig);
+        const connection = await pool.getConnection();
         const [locations] = await connection.execute<mysql.RowDataPacket[]>("SELECT * FROM locations");
         await connection.end();
         res.json(locations);
@@ -658,7 +671,7 @@ function formatDate(date: Date): string {
 app.get("/flighttableplane", async (req: Request, res: Response) => {
     let connection;
     try {
-        connection = await mysql.createConnection(dbConfig);
+        connection = await pool.getConnection();
 
         const query = `
             SELECT 
@@ -728,7 +741,7 @@ app.get("/flighttableplane", async (req: Request, res: Response) => {
 app.get("/flighttablehelico", async (req: Request, res: Response) => {
     let connection;
     try {
-        connection = await mysql.createConnection(dbConfig);
+        connection = await pool.getConnection();
 
         const query = `
             SELECT 
@@ -799,7 +812,7 @@ app.get("/flighttablehelico", async (req: Request, res: Response) => {
 app.get("/dashboard-stats", async (req: Request, res: Response) => {
     let connection;
     try {
-        connection = await mysql.createConnection(dbConfig);
+        connection = await pool.getConnection();
 
         // 1. Récupérer les réservations avec un typage explicite
         const [bookingRows] = await connection.query<mysql.RowDataPacket[]>(`
@@ -1074,31 +1087,21 @@ router.post("/send-ticket", async (req, res) => {
     }
 });
 
-// Montez le routeur sous /api
-app.use("/api", router);
-
-// Démarrer le serveur
-
-
-app.listen(PORT, () => {
-    console.log(`Serveur en écoute sur le port ${PORT}`);
+// Middleware de gestion d'erreurs
+app.use((err: any, req: Request, res: Response, next: NextFunction) => {
+    console.error('Erreur:', err);
+    res.status(500).json({
+        error: 'Erreur interne du serveur',
+        ...(process.env.NODE_ENV !== 'production' && { details: err.message })
+    });
 });
 
+// Route 404
+app.use('*', (req: Request, res: Response) => {
+    res.status(404).json({ error: 'Route non trouvée' });
+});
 
-
-
-
-if (process.env.NODE_ENV === 'production') {
-    const options = {
-        key: fs.readFileSync('/path/to/privkey.pem'),
-        cert: fs.readFileSync('/path/to/fullchain.pem')
-    };
-
-    https.createServer(options, app).listen(443, () => {
-        console.log('Serveur HTTPS démarré sur le port 443');
-    });
-} else {
-    app.listen(PORT, () => {
-        console.log(`Serveur en écoute sur le port ${PORT}`);
-    });
-}
+app.listen(PORT, () => {
+    console.log(`🚀 Serveur démarré sur le port ${PORT}`);
+    console.log(`🌍 Environnement: ${process.env.NODE_ENV || 'development'}`);
+});
