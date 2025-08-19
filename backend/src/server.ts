@@ -1,5 +1,4 @@
-// backend/src/server.ts
-import express from 'express';
+import express, { Request, Response } from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
@@ -11,7 +10,6 @@ import dotenv from 'dotenv';
 dotenv.config();
 const app = express();
 const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 10000;
-
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -25,8 +23,8 @@ app.use(rateLimit({ windowMs: 15 * 60 * 1000, max: 100 }));
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 
-// ✅ ROUTES API
-app.get('/api/health', (req, res) => {
+// Routes API
+app.get('/api/health', (req: Request, res: Response) => {
     res.json({ 
         status: 'OK', 
         service: 'Trogon Fullstack API',
@@ -34,11 +32,11 @@ app.get('/api/health', (req, res) => {
     });
 });
 
-// ✅ SERVIR LES FICHIERS STATICS DU FRONTEND
+// Servir les fichiers statiques du frontend
 app.use(express.static(path.join(__dirname, '../../dist')));
 
-// ✅ TOUTES LES AUTRES ROUTES VERS LE FRONTEND
-app.get('*', (req, res) => {
+// Toutes les autres routes vers le frontend
+app.get('*', (req: Request, res: Response) => {
     res.sendFile(path.join(__dirname, '../../dist/index.html'));
 });
 
