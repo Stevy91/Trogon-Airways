@@ -2,12 +2,11 @@
   "name": "backend-ts-template",
   "version": "1.0.0",
   "main": "dist/server.js",
-  "type": "module",
+
   "scripts": {
-    "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
+    "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
     "build": "tsc",
-    "start": "node dist/server.js",
-    "clean": "rm -rf dist"
+    "start": "node dist/index.js"
   },
   "engines": {
     "node": ">=18.0.0"
@@ -40,6 +39,7 @@
     "@types/paypal__checkout-server-sdk": "^1.0.8",
     "@types/stripe": "^8.0.416",
     "ts-node": "^10.9.2",
+    "ts-node-dev": "^2.0.0",
     "typescript": "^5.9.2"
   }
 }
