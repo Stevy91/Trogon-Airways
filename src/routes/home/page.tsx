@@ -6,7 +6,9 @@ import BookingForm from "../../components/BookingForm";
 import { useState } from "react";
 
 export default function HomePage() {
-      const [flights, setFlights] = useState([]);
+      const [, setFlights] = useState<any[]>([]);
+
+
 
   // Cette fonction sera appelée par BookingForm avec les résultats
   const handleSearch = (foundFlights: any[]) => {

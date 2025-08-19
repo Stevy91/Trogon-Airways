@@ -1,4 +1,4 @@
-import { useState, useCallback, memo, useEffect } from "react";
+import { useState, useCallback, memo} from "react";
 import { ChevronLeft, MapPin } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { COUNTRIES } from "../../constants/country";

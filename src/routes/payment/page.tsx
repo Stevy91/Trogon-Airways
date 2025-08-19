@@ -298,7 +298,7 @@ const BookingSummary = ({ bookingData }: { bookingData: PassengerData }) => {
 };
 // Configurez votre clé publique Stripe
 
-const paypalClientId = import.meta.env.VITE_PAYPAL_CLIENT_ID || "your_paypal_client_id";
+const paypalClientId = import.meta.env.VITE_PAYPAL_CLIENT_ID;
 const stripePromise = loadStripe("pk_test_51IxWQcCWPjcmZuUZHSKwNZssNdyHCo9ny1vffTyTQCsVk1ZVBeCQNQih3H7hlRUgV92heLSS09WFaH8ieoSs6P0y00my7uI9Cl");
 
 export function transformPassengers(
@@ -535,7 +535,7 @@ const PayPalPayment = ({ totalPrice, onSuccess }: { totalPrice: number; onSucces
                     label: "pay",
                     height: 48,
                 }}
-                createOrder={(data, actions) => {
+                createOrder={(_data, actions) => {
                     return actions.order.create({
                         intent: "CAPTURE",
                         purchase_units: [
@@ -610,7 +610,7 @@ export default function Pay() {
     const [paymentMethod, setPaymentMethod] = useState<"stripe" | "paypal">("stripe");
     const [paymentSuccess, setPaymentSuccess] = useState(false);
     const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
+    const [error] = useState<string | null>(null);
     const paymentData = location.state as PaymentData;
 
     useEffect(() => {
@@ -630,7 +630,7 @@ export default function Pay() {
                 state: {
                     bookingData: {
                         ...paymentData,
-                        bookingReference: successData.reference, 
+                        bookingReference: successData.reference,
                     },
                     paymentMethod,
                 },
@@ -784,13 +784,13 @@ export default function Pay() {
                                         <StripePaymentForm
                                             totalPrice={paymentData.totalPrice}
                                             onSuccess={handlePaymentSuccess}
-                                            paymentData={paymentData} 
+                                            paymentData={paymentData}
                                         />
                                     </Elements>
                                 ) : (
                                     <PayPalScriptProvider
                                         options={{
-                                            "client-id": paypalClientId,
+                                            clientId: paypalClientId || "", // obligatoire et non null
                                             components: "buttons",
                                             currency: "USD",
                                         }}
@@ -799,8 +799,8 @@ export default function Pay() {
                                             totalPrice={paymentData.totalPrice}
                                             onSuccess={() =>
                                                 handlePaymentSuccess({
-                                                    bookingId: 0, // Vous devrez obtenir l'ID réel
-                                                    reference: "TEMPORARY_REF", // Vous devrez obtenir la référence réelle
+                                                    bookingId: 0, // à remplacer par l'ID réel
+                                                    reference: "TEMPORARY_REF", // à remplacer par la référence réelle
                                                 })
                                             }
                                         />

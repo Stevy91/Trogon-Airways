@@ -22,9 +22,10 @@ interface Flight {
     arrival_time: string;
     time: string;
     price: number;
-    type: FlightType;
+    type: FlightType | string;
     seat: string;
     noflight: string;
+   
 }
 
 interface Location {
