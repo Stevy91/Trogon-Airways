@@ -4,11 +4,13 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "tsc -b && vite build",
-    "lint": "eslint .",
-    "preview": "vite preview"
+     "dev": "vite",
+  "build": "tsc -b && vite build",
+  "preview": "vite preview",
+  "start": "vite preview",
+  "lint": "eslint ."
   },
+  
   "dependencies": {
     "@iconify/react": "^6.0.0",
     "@paypal/react-paypal-js": "^8.8.3",
