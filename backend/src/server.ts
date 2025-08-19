@@ -1,4 +1,4 @@
-import express, { Request, Response } from "express";
+import express, { NextFunction, Request, Response } from "express";
 import cors from "cors";
 import mysql from "mysql2/promise";
 
@@ -47,7 +47,7 @@ app.use(cors({
 // };
 
 // Pool MySQL global
-const pool = mysql.createPool(dbConfig);
+
 
 
 app.use(express.json({ limit: '10mb' }));
@@ -70,7 +70,7 @@ const dbConfig = {
         }
     } : {})
 };
-
+const pool = mysql.createPool(dbConfig);
 // Test de connexion à la base de données
 pool.getConnection()
     .then(connection => {
@@ -924,7 +924,7 @@ app.get("/dashboard-stats", async (req: Request, res: Response) => {
     }
 });
 
-const pool = mysql.createPool(dbConfig);
+
 
 // Route pour ajouter un nouveau vol
 app.post("/addflighttable", async (req, res) => {
