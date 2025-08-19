@@ -10,8 +10,9 @@ export default defineConfig({
         },
     },
     server: {
-        port: 3000,
+        port: Number(process.env.PORT) || 3000,
         strictPort: true,
+        host: true, // écoute sur 0.0.0.0
         proxy: {
             "/api": {
                 target: "http://localhost:3014",
@@ -31,7 +32,8 @@ export default defineConfig({
         },
     },
     preview: {
-        port: 3000,
+        port: Number(process.env.PORT) || 3000,
         strictPort: true,
+        host: true, // écoute sur 0.0.0.0
     },
 });
