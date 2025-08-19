@@ -10,31 +10,27 @@ export default defineConfig({
         },
     },
     server: {
-        port: Number(process.env.PORT) || 10000,
+        port: 3000,
         strictPort: true,
         host: true,
-        // ✅ Ajouter le proxy pour le backend en développement
         proxy: {
             '/api': {
-                target: 'http://localhost:3001', // ou l'URL de votre backend
-                changeOrigin: true,
-                secure: false
+                target: 'http://localhost:10000',
+                changeOrigin: true
             }
         }
     },
-    preview: {
-        port: Number(process.env.PORT) || 10000,
-        strictPort: true,
-        host: true,
-        // ✅ CORRECTION : Autoriser le domaine Render
-        allowedHosts: [
-            "trogon-airways.onrender.com",
-            ".onrender.com" // autoriser tous les sous-domaines render
-        ],
-    },
-    // ✅ Configuration build pour production
     build: {
         outDir: 'dist',
         sourcemap: false
+    },
+    preview: {
+        port: 10000,
+        strictPort: true,
+        host: true,
+        allowedHosts: [
+            "trogon-airways.onrender.com",
+            ".onrender.com"
+        ]
     }
 });
