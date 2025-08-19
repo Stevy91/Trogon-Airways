@@ -13,27 +13,11 @@ export default defineConfig({
         port: Number(process.env.PORT) || 3000,
         strictPort: true,
         host: true, // écoute sur 0.0.0.0
-        proxy: {
-            "/api": {
-                target: "http://localhost:3014",
-                changeOrigin: true,
-                secure: false,
-                rewrite: (path) => path.replace(/^\/api/, ""),
-                ws: true,
-                configure: (proxy) => {
-                    proxy.on("error", (err) => {
-                        console.error("Proxy error:", err);
-                    });
-                    proxy.on("proxyReq", (proxyReq) => {
-                        console.log("Proxy request to:", proxyReq.path);
-                    });
-                },
-            },
-        },
     },
     preview: {
         port: Number(process.env.PORT) || 3000,
         strictPort: true,
         host: true, // écoute sur 0.0.0.0
+        allowedHosts: ["trogon-airways.onrender.com"], // autoriser ton domaine
     },
 });
