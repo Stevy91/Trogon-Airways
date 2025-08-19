@@ -1,18 +1,50 @@
-// server/index.js (backend séparé)
-import express from "express";
-import cors from "cors";
+// backend/src/server.ts
+import express from 'express';
+import cors from 'cors';
+import helmet from 'helmet';
+import rateLimit from 'express-rate-limit';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import dotenv from 'dotenv';
 
+// Configuration
+dotenv.config();
 const app = express();
-const PORT = process.env.PORT || 10000;
+const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 10000;
 
-app.use(cors());
-app.use(express.json());
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
-// Vos routes API ici...
-app.get("/api/health", (req, res) => {
-    res.json({ status: "OK", service: "Backend API" });
+// Middleware
+app.use(helmet());
+app.use(cors({
+    origin: ['https://trogon-airways.onrender.com', 'http://localhost:3000'],
+    credentials: true
+}));
+app.use(rateLimit({ windowMs: 15 * 60 * 1000, max: 100 }));
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true }));
+
+// ✅ ROUTES API
+app.get('/api/health', (req, res) => {
+    res.json({ 
+        status: 'OK', 
+        service: 'Trogon Fullstack API',
+        timestamp: new Date().toISOString()
+    });
 });
 
-app.listen(PORT, () => {
-    console.log(`🚀 Backend running on port ${PORT}`);
+// ✅ SERVIR LES FICHIERS STATICS DU FRONTEND
+app.use(express.static(path.join(__dirname, '../../dist')));
+
+// ✅ TOUTES LES AUTRES ROUTES VERS LE FRONTEND
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, '../../dist/index.html'));
+});
+
+// Démarrer le serveur
+app.listen(PORT, '0.0.0.0', () => {
+    console.log(`🚀 Fullstack server running on port ${PORT}`);
+    console.log(`🌍 Frontend: http://localhost:${PORT}`);
+    console.log(`🔧 API: http://localhost:${PORT}/api`);
 });
