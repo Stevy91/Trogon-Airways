@@ -53,22 +53,30 @@ app.use(cors({
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 
-// Configuration de la base de données
+// Configuration spécifique GoDaddy
 const dbConfig = {
-    host: process.env.DB_HOST,
-    user: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_NAME,
+    host: process.env.DB_HOST || 'your-godaddy-mysql-host', // Ex: hh-xxxxx.godaddy.com
+    user: process.env.DB_USER || 'your-godaddy-username',
+    password: process.env.DB_PASSWORD || 'your-godaddy-password',
+    database: process.env.DB_NAME || 'your-database-name',
+    port: parseInt(process.env.DB_PORT || '3306'),
+    
+    // Configuration spécifique pour GoDaddy
     waitForConnections: true,
     connectionLimit: 10,
     queueLimit: 0,
     acquireTimeout: 60000,
     timeout: 60000,
-    ...(process.env.DB_SSL === 'true' ? {
-        ssl: {
-            rejectUnauthorized: false
-        }
-    } : {})
+    
+    // GoDaddy requiert souvent SSL
+    ssl: {
+        rejectUnauthorized: false,
+        minVersion: 'TLSv1.2'
+    },
+    
+    // Paramètres de timezone importants
+    timezone: '+00:00',
+    charset: 'utf8mb4'
 };
 const pool = mysql.createPool(dbConfig);
 // Test de connexion à la base de données
@@ -80,6 +88,32 @@ pool.getConnection()
     .catch(err => {
         console.error('❌ Erreur de connexion MySQL:', err.message);
     });
+
+
+    // Route de test de connexion GoDaddy
+app.get('/test-db', async (req: Request, res: Response) => {
+    try {
+        const connection = await pool.getConnection();
+        
+        // Test simple de requête
+        const [result] = await connection.execute('SELECT 1 + 1 AS solution');
+        
+        connection.release();
+        
+        res.json({ 
+            status: '✅ Connexion GoDaddy MySQL réussie',
+            result: result,
+            timestamp: new Date().toISOString()
+        });
+    } catch (error: any) {
+        console.error('❌ Erreur connexion GoDaddy:', error);
+        res.status(500).json({ 
+            error: 'Erreur connexion GoDaddy MySQL',
+            details: process.env.NODE_ENV !== 'production' ? error.message : 'Internal error',
+            code: error.code
+        });
+    }
+});
 
 // Initialisation de Stripe avec votre clé secrète
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
