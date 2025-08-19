@@ -1,4 +1,4 @@
-import express, { Request, Response } from "express";
+import express, { NextFunction, Request, Response } from "express";
 import cors from "cors";
 import mysql from "mysql2/promise";
 import helmet from 'helmet';
@@ -10,6 +10,34 @@ dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 10000; // PORT Render
+// Middleware pour identifier les requêtes API
+app.use((req: Request, res: Response, next: NextFunction) => {
+    console.log('📦 Request received:', {
+        method: req.method,
+        url: req.url,
+        path: req.path,
+        originalUrl: req.originalUrl,
+        timestamp: new Date().toISOString()
+    });
+    next();
+});
+
+// Route spécifique pour identifier l'environnement
+app.get('/api/debug', (req: Request, res: Response) => {
+    res.json({
+        service: 'Trogon Airways Backend',
+        timestamp: new Date().toISOString(),
+        environment: process.env.NODE_ENV,
+        nodeVersion: process.version,
+        routes: [
+            '/api/health',
+            '/api/test-db', 
+            '/api/flights',
+            '/api/locations',
+            '/api/debug'
+        ]
+    });
+});
 
 // Middleware de base ESSENTIEL
 app.use(helmet());
@@ -49,6 +77,8 @@ const dbConfig = {
         minVersion: 'TLSv1.2'
     } : undefined
 };
+
+
 
 // Pool global
 const pool = mysql.createPool(dbConfig);
