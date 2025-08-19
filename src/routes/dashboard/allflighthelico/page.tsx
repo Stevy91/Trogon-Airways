@@ -48,7 +48,7 @@ const FlightTable = () => {
         const fetchFlights = async () => {
             try {
                 console.log("Début de la récupération des vols...");
-                const response = await fetch("${import.meta.env.VITE_API_URL}/flighttablehelico");
+                const response = await fetch(`${import.meta.env.VITE_API_URL}/flighttablehelico`);
 
                 if (!response.ok) {
                     const errorData = await response.json().catch(() => ({}));
@@ -84,7 +84,7 @@ const FlightTable = () => {
 
     const handleAddFlight = async (flightData: any) => {
         try {
-            const response = await fetch("${import.meta.env.VITE_API_URL}/addflighttable", {
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/addflighttable`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -106,7 +106,7 @@ const FlightTable = () => {
             }
 
             // Rechargement des données
-            const updatedResponse = await fetch("${import.meta.env.VITE_API_URL}/flighttablehelico"); // Changé le endpoint
+            const updatedResponse = await fetch(`${import.meta.env.VITE_API_URL}/flighttablehelico`); // Changé le endpoint
             if (!updatedResponse.ok) {
                 throw new Error("Erreur lors du chargement des vols");
             }

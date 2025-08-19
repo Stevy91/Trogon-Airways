@@ -175,7 +175,7 @@ export default function BookingForm({ onSearch }: BookingFormProps) {
     };
 
     useEffect(() => {
-        fetch("${import.meta.env.VITE_API_URL}/locations")
+        fetch(`${import.meta.env.VITE_API_URL}/locations`)
             .then((res) => res.json())
             .then((data) => {
                 setLocations(data);
