@@ -42,7 +42,6 @@ export default function DateCarousel({
     date,
     passengers,
     tripType,
-    tabType,
     label = "",
     isReturnDateCarousel = false,
     returnDate = "",
@@ -123,7 +122,7 @@ export default function DateCarousel({
             {allDates.slice(startIndex, startIndex + visibleCount).map((d, i) => {
                 const globalIndex = startIndex + i;
                 const isSelected = globalIndex === selectedDateIndex;
-                const isAvailable = d.price != null;
+              
                 const formattedDate = format(d.date, "yyyy-MM-dd");
 
                 return (

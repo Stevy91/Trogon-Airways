@@ -1,6 +1,6 @@
 "use client";
 import { UserIcon, PlaneIcon, CalendarIcon, MapPinIcon, ChevronDown } from "lucide-react";
-import { HelicopterIcon } from "./icons/HelicopterIcon";
+
 import { useEffect, useRef, useState } from "react";
 import "react-date-range/dist/styles.css";
 import "react-date-range/dist/theme/default.css";
@@ -30,7 +30,7 @@ export default function BookingForm({ onSearch }: BookingFormProps) {
     const [selectedDeparture, setSelectedDeparture] = useState("");
     const [selectedDestination, setSelectedDestination] = useState("");
     const [selectedDate, setSelectedDate] = useState("");
-    const [selectedType, setSelectedType] = useState("onway");
+
 
     const [selectedDeparture2, setSelectedDeparture2] = useState("");
     const [selectedDestination2, setSelectedDestination2] = useState("");
