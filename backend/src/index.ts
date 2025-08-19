@@ -6,9 +6,7 @@ import path from "path";
 import { fileURLToPath } from "url";
 import dotenv from "dotenv";
 
-
-
-// Configuration
+// Charger les variables d'environnement
 dotenv.config();
 
 const app = express();
@@ -21,33 +19,37 @@ const __dirname = path.dirname(__filename);
 app.use(helmet());
 app.use(
   cors({
-    origin: ["https://trogon-airways.onrender.com", "http://localhost:3000"],
+    origin: [
+      "https://trogon-airways.onrender.com",
+      "http://localhost:3000",
+    ],
     credentials: true,
   })
 );
-
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true }));
 
 // ✅ ROUTES API
-app.get("/api/health", (req: Request, res: Response) => {
+app.get("/api/health", (_req: Request, res: Response) => {
   res.json({ status: "OK", service: "Trogon Fullstack API" });
 });
 
-app.get("/api/test-db", async (req: Request, res: Response) => {
+app.get("/api/test-db", async (_req: Request, res: Response) => {
   try {
+    // Ici tu peux tester la DB
     res.json({ success: true, message: "Database test endpoint" });
   } catch (error) {
-    res.status(500).json({ error: "steve" });
+    res.status(500).json({ error: "Database error" });
   }
 });
 
-// ✅ SERVIR LES FICHIERS STATICS DU FRONTEND
-app.use(express.static(path.join(__dirname, "../dist")));
+// ✅ Servir le frontend build
+const frontendPath = path.join(__dirname, "../dist");
+app.use(express.static(frontendPath));
 
-// ✅ TOUTES LES AUTRES ROUTES VERS LE FRONTEND
-app.get("*", (req: Request, res: Response) => {
-  res.sendFile(path.join(__dirname, "../dist/index.html"));
+// ✅ Toutes les autres routes renvoient vers index.html
+app.get("*", (_req: Request, res: Response) => {
+  res.sendFile(path.join(frontendPath, "index.html"));
 });
 
 // Démarrer le serveur
