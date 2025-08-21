@@ -10,7 +10,10 @@
     "outDir": "dist-backend",
     "rootDir": "src",
     "resolveJsonModule": true,
-    "types": ["node"]
+    "types": ["node"],
+    "forceConsistentCasingInFileNames": true
   },
   "include": ["src/**/*"]
 }
+
+
