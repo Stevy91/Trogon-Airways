@@ -1,13 +1,12 @@
 {
   "name": "backend-ts-template",
   "version": "1.0.0",
-  "main": "src/index.ts",
+  "main": "dist-backend/server.js",
   "type": "module",
   "scripts": {
-    "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
-    "build": "tsc -p backend/tsconfig.json", 
+    "build": "tsc -p backend/tsconfig.json",
     "start": "node dist-backend/server.js",
- 
+    "dev": "ts-node --esm src/server.ts"
   },
   "engines": {
     "node": ">=18.0.0"
