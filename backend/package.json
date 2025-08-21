@@ -3,11 +3,12 @@
   "version": "1.0.0",
   "main": "dist-backend/server.js",
   "type": "module",
-  "scripts": {
-    "build": "tsc -p backend/tsconfig.json",
-    "start": "node dist-backend/server.js",
-    "dev": "ts-node --esm src/server.ts"
-  },
+ "scripts": {
+  "build": "tsc -p backend/tsconfig.json",
+  "start": "node dist-backend/server.js",
+  "dev": "ts-node --esm src/server.ts"
+}
+,
   "engines": {
     "node": ">=18.0.0"
   },
